@@ -1,23 +1,18 @@
 import 'dotenv/config'; // Carga las variables del archivo .env
 
 import express from 'express';
-import { Pool } from 'pg';
+import pool from './config/db.js';
 import helloRoutes from './routes/helloRoutes.js';
+import productRoutes from './routes/productRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-        rejectUnauthorized: false
-    }
-});
-
-app.use(express.json());
+app.use(express.json({ limit: '50mb' })); // Aumentado para soportar imágenes en base64
 
 // Routes
 app.use('/api/hello', helloRoutes);
+app.use('/api/products', productRoutes);
 
 app.get('/api/status', async (req, res) => {
     try {
